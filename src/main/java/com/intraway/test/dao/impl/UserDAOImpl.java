@@ -49,7 +49,7 @@ public class UserDAOImpl extends AbstractHibernateDao implements UserDao {
             CriteriaBuilder criteriaBuilder = getCurrentSession().getCriteriaBuilder();
             CriteriaQuery<User> criteriaQuery = criteriaBuilder.createQuery(User.class);
             Root<User> root = criteriaQuery.from(User.class);
-            criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("username"),userName));
+            criteriaQuery.select(root).where(criteriaBuilder.equal(root.get("userName"),userName));
             User result =  getCurrentSession().createQuery(criteriaQuery).uniqueResult();
             return result;
         }

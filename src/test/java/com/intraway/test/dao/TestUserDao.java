@@ -4,6 +4,8 @@ import com.intraway.test.dao.impl.UserDAOImpl;
 import com.intraway.test.model.User;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
 
@@ -14,6 +16,7 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
+@RunWith(SpringJUnit4ClassRunner.class)
 public class TestUserDao {
 
 	private static UserDAOImpl userDAO;
@@ -29,7 +32,7 @@ public class TestUserDao {
 		savedUser.setUserName("Esteban");
 		savedUser.setEmailAddress("esteban.santamarina");
 		userDAO.save(savedUser);
-		User userAfterInsert = userDAO.findById(savedUser.getUserId(), User.class);
+		User userAfterInsert = userDAO.getUserByName(savedUser.getUserName());
 		assertThat(userAfterInsert.getUserName(), is(equalTo("Esteban")));
 		assertThat(userAfterInsert.getEmailAddress(), is(equalTo("esteban.santamarina")));
 	}
@@ -43,7 +46,13 @@ public class TestUserDao {
 	@Test
 	public void testGetUserById() {
 		User retrievedUser = userDAO.findById(2L, User.class);
-		assertThat(retrievedUser.getUserName(),is(equalTo("revolutUser")));
+		assertThat(retrievedUser.getUserName(),is(equalTo("intraway")));
+	}
+
+	@Test
+	public void testGetUserByUserName() {
+		User retrievedUser = userDAO.getUserByName("esantamarina");
+		assertThat(retrievedUser.getEmailAddress(),is(equalTo("esteban.santamarina2@gmail.com")));
 	}
 
 	@Test

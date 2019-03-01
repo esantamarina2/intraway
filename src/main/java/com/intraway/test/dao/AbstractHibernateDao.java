@@ -3,11 +3,11 @@ package com.intraway.test.dao;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
 import javax.transaction.Transactional;
 import java.io.Serializable;
 
-@Transactional
 public abstract class AbstractHibernateDao implements DataSourceOperationDao {
 
     protected Logger log = Logger.getLogger(getClass());
@@ -29,11 +29,12 @@ public abstract class AbstractHibernateDao implements DataSourceOperationDao {
         return entity;
     }
 
-    @Transactional
     public <T extends Serializable> void save(final T entity) {
         log.debug("Save: persisting instance " + entity.toString());
         try {
+            Transaction trans = getCurrentSession().beginTransaction();
             getCurrentSession().persist(entity);
+            trans.commit();
         } catch (RuntimeException re) {
             log.error("Persist failed for " + entity.toString(), re);
             throw re;
@@ -68,7 +69,7 @@ public abstract class AbstractHibernateDao implements DataSourceOperationDao {
     }
 
     protected Session getCurrentSession() {
-        return sessionFactory.getCurrentSession();
+        return sessionFactory.openSession();
     }
 
 }

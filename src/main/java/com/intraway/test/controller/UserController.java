@@ -35,7 +35,8 @@ public class UserController {
      * @return
      */
     @GetMapping(value = "/all")
-    public List<User> getAllUsers() {
+    public List<User> getAllUsers()
+    {
         return userDAO.getAllUsers();
     }
 
@@ -45,12 +46,12 @@ public class UserController {
      * @return
      */
     @PostMapping("/")
-    public User createUser(@RequestBody User user) {
+    public Response createUser(@RequestBody User user) {
         if (userDAO.getUserByName(user.getUserName()) != null) {
             throw new WebApplicationException("User name already exist", Response.Status.BAD_REQUEST);
         }
         userDAO.save(user);
-        return userDAO.findById(user.getUserId(), User.class);
+        return Response.status(Response.Status.CREATED).build();
     }
 
     /**
@@ -60,8 +61,18 @@ public class UserController {
      * @return
      */
     @PutMapping("/{userName}")
-    public User updateUser(@PathVariable String userName, @RequestBody User user) {
-        return userDAO.update(user);
+    public Response updateUser(@PathVariable String userName, @RequestBody User user) {
+        User retrievedUser = userDAO.getUserByName(userName);
+        if (retrievedUser == null) {
+            throw new WebApplicationException("User Not Found", Response.Status.NOT_FOUND);
+        }
+        try {
+            userDAO.update(user);
+            return Response.status(Response.Status.OK).build();
+        }
+        catch (Exception e) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        }
     }
 
     /**
